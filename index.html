@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Turbo Burger — INDY-5 / KSU CS 4850</title>
+  <meta name="description" content="An automated restaurant, simulated in NVIDIA Isaac Sim. Kennesaw State University CS 4850 senior project, Spring 2026." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+<!-- ─────────────────────────────  NAV  ───────────────────────────── -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div style="display:flex;align-items:center;gap:16px">
+      <a href="#" class="brand">
+        <span class="dot"></span>
+        Turbo&nbsp;Burger
+      </a>
+      <span class="brand-mark">// INDY-5</span>
+    </div>
+    <nav class="links">
+      <a href="#overview">01 Overview</a>
+      <a href="#system">02 System</a>
+      <a href="#cycle">03 Cycle</a>
+      <a href="#demo">04 Demo</a>
+      <a href="#team">05 Team</a>
+    </nav>
+    <a class="nav-cta" href="https://github.com/Pahtolo/turbo-burger-site" target="_blank" rel="noopener">
+      Source ↗
+    </a>
+  </div>
+</header>
+
+<!-- ─────────────────────────────  HERO  ───────────────────────────── -->
+<section class="hero">
+  <!-- Full-bleed 3D arm hero stage -->
+  <div class="stage hero-stage reveal delay-2">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+    <span class="stage-label">// UR5e · STEP ASSET</span>
+    <span class="stage-foot">
+      <span class="ok">GLB LOADED</span>
+      <span class="ok">ARM HOMED</span>
+      <span class="warn">FLIP PEND.</span>
+    </span>
+    <div id="heroStage" style="position:absolute;inset:0"></div>
+  </div>
+
+  <div class="wrap hero-copy">
+
+    <div class="hud-row reveal">
+      <span class="pill"><span class="live"></span> SIM IDLE · v0.9.2</span>
+      <span class="pill">CS 4850 · Sec 02</span>
+      <span class="pill">Kennesaw State University</span>
+      <span class="pill">Spring 2026</span>
+    </div>
+
+    <div class="hero-grid">
+      <div>
+        <h1 class="title" data-split>Turbo Burger<br /><em>workcell.</em></h1>
+        <p class="lede reveal delay-2">
+          A Universal Robots UR5e version, staged with procedural patty
+          geometry and a deterministic Isaac Sim control loop. The workcell
+          picks, places, smashes, cooks, and flips a patty without leaving one
+          Python process.
+        </p>
+        <div class="cta-row reveal delay-3">
+          <a class="btn primary" href="#system">
+            Read the system <span class="arrow">→</span>
+          </a>
+          <a class="btn" href="https://github.com/Pahtolo/turbo-burger-site" target="_blank" rel="noopener">
+            View source <span class="arrow">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASCII tape -->
+    <div class="tape" aria-hidden="true">
+      <span>
+        ───═══+++ &nbsp; SCENE_LOADED &nbsp; +++═══─── &nbsp; ARM_HOMED &nbsp; ───═══+++ &nbsp; PERCEPTION_OK &nbsp; +++═══─── &nbsp; FSM_RUNNING &nbsp; ───═══+++ &nbsp; END_EFFECTOR=GRIP &nbsp; +++═══─── &nbsp; PATTY.COLOR=BROWNED &nbsp; ───═══+++ &nbsp; READINESS=TRUE &nbsp; +++═══─── &nbsp; FLIP_PENDING &nbsp; ───═══+++ &nbsp;
+        ───═══+++ &nbsp; SCENE_LOADED &nbsp; +++═══─── &nbsp; ARM_HOMED &nbsp; ───═══+++ &nbsp; PERCEPTION_OK &nbsp; +++═══─── &nbsp; FSM_RUNNING &nbsp; ───═══+++ &nbsp; END_EFFECTOR=GRIP &nbsp; +++═══─── &nbsp; PATTY.COLOR=BROWNED &nbsp; ───═══+++ &nbsp; READINESS=TRUE &nbsp; +++═══─── &nbsp; FLIP_PENDING &nbsp; ───═══+++ &nbsp;
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  01 OVERVIEW  ───────────────────────── -->
+<section class="s" id="overview">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num reveal">[ 01 ]<br/>OVERVIEW</div>
+      <div>
+        <h2 class="section-title" data-split>A stationary workcell, modeled<br/><em>end-to-end.</em></h2>
+        <p class="section-deck reveal delay-2">
+          One UR arm. Three end-effectors. A stove in front, a handoff plane
+          behind, and a perception loop that watches the patty cook in real
+          time. Every component runs in a single Python process inside Isaac
+          Sim — no network hops, no external bus.
+        </p>
+      </div>
+    </div>
+
+    <div class="ov-grid reveal delay-2">
+      <div class="ov-cell">
+        <span class="num">// PILLAR 01</span>
+        <span class="glyph">╳ &nbsp; ▭ &nbsp; ╳</span>
+        <h3>Workcell</h3>
+        <p>USD scene with the arm centered, stove in front, handoff plane behind. Spawn points for buns, patties, and toppings.</p>
+      </div>
+      <div class="ov-cell">
+        <span class="num">// PILLAR 02</span>
+        <span class="glyph">▱ ▰ ▱</span>
+        <h3>Perception</h3>
+        <p>A Python sampler walks the patty material through a color ramp — raw → browned → done — and emits a readiness flag.</p>
+      </div>
+      <div class="ov-cell">
+        <span class="num">// PILLAR 03</span>
+        <span class="glyph">▶ ▷ ▶</span>
+        <h3>Controller</h3>
+        <p>An FSM commands arm motion and end-effector swaps in response to readiness events. The recipe order stays deterministic.</p>
+      </div>
+    </div>
+
+    <!-- live-style status panel -->
+    <div class="status-panel reveal delay-3">
+      <div class="status-head">
+        <span>// SYSTEM STATUS · DEMO BUILD</span>
+        <span class="run"><span class="live"></span> RUNNING</span>
+      </div>
+      <div class="status-rows">
+        <div class="status-row"><span class="label">scene.usd</span><span class="val ok">LOADED</span></div>
+        <div class="status-row"><span class="label">arm.controller</span><span class="val ok">HOMED</span></div>
+        <div class="status-row"><span class="label">perception.patty_state</span><span class="val ok">SAMPLING</span></div>
+        <div class="status-row"><span class="label">collision.guard</span><span class="val ok">CLEAN</span></div>
+        <div class="status-row"><span class="label">end_effector.gripper</span><span class="val warn">FLAKY</span></div>
+        <div class="status-row"><span class="label">trajectory.flip</span><span class="val warn">SCAFFOLDED</span></div>
+        <div class="status-row"><span class="label">cycle.full_loop</span><span class="val todo">PENDING</span></div>
+        <div class="status-row"><span class="label">tests</span><span class="val ok">06 / 09 PASS</span></div>
+      </div>
+    </div>
+
+    <div class="test-bar reveal delay-3">
+      <span>Test results · 6 of 9 passing</span>
+      <div class="track"><div class="fill"></div></div>
+      <span>0 skipped</span>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  TURNTABLE  ───────────────────────── -->
+<!--
+  The big pinned 3D moment. This is one tall section that contains a
+  sticky pinned 3D scene (the turntable) layered with HUD overlay text.
+  Architecture (#system) and Cycle (#cycle) live OUTSIDE this section,
+  immediately after — by then the body has flipped to dark mode.
+-->
+<section id="turntable" class="turntable" aria-label="Workcell turntable">
+  <div class="pin">
+    <div class="stage-3d"></div>
+
+    <div class="tt-hud">
+      <div class="top-l">
+        // TURBO BURGER · WORKCELL
+      </div>
+      <div class="top-r">
+        <span class="focus-label">
+          <span class="fdot"></span>
+          <span data-focus>FOCUS · PATTY</span>
+        </span>
+      </div>
+
+      <div class="center">
+        <span class="small">// PATTY · SIM LOOP</span>
+        <p class="big">A patty,<br/><em>cooked in sim.</em></p>
+        <span class="meta">
+          <span>RAW MATERIAL</span>
+          <span>COOK COLOR RAMP</span>
+          <span>SCROLL TO ROTATE</span>
+          <span>READINESS SIGNAL</span>
+        </span>
+      </div>
+
+      <div class="bot-l">
+        // UR5e · 6 DOF · REACH 850MM
+      </div>
+      <div class="bot-r">
+        // SCENE · USD · ISAAC SIM 5.10
+      </div>
+    </div>
+
+    <div class="tt-progress">
+      <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  02 SYSTEM  ───────────────────────── -->
+<!-- Lives in the dark act -->
+<section class="s" id="system">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num reveal">[ 02 ]<br/>ARCHITECTURE</div>
+      <div>
+        <h2 class="section-title" data-split>Three layers,<br/><em>one Python process.</em></h2>
+        <p class="section-deck reveal delay-2">
+          Communication between layers is in-process state, not a message bus.
+          The simulator holds ground truth; perception summarizes it; the
+          controller acts. Everything lives behind Isaac Sim's embedded Python.
+        </p>
+      </div>
+    </div>
+
+    <div class="arch">
+      <div class="arch-diagram reveal delay-2">
+        <div class="layer">
+          <div class="ord">L3</div>
+          <div>
+            <h4>Controller</h4>
+            <p><span class="module">recipe_runner.py</span> · <span class="module">end_effector_manager.py</span></p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="ord">L2</div>
+          <div>
+            <h4>Perception</h4>
+            <p><span class="module">patty_state.py</span></p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="ord">L1</div>
+          <div>
+            <h4>Environment</h4>
+            <p><span class="module">scene_loader.py</span> · USD scene · OmniGraph</p>
+          </div>
+        </div>
+
+        <div class="arch-flow">
+          <b>Data flow</b><br/>
+          L1 → samples → <b>L2</b> → readiness flag → <b>L3</b> → joint cmds → L1
+        </div>
+      </div>
+
+      <div class="arch-side reveal delay-3">
+        <h4>// COMPONENTS</h4>
+        <ul>
+          <li><span class="mark">▢</span><div><b>UR arm controller</b> — joint targets, IK, home pose, collision guard.</div></li>
+          <li><span class="mark">▢</span><div><b>End-effector manager</b> — attach/detach gripper, spatula, smasher via OmniGraph.</div></li>
+          <li><span class="mark">▢</span><div><b>Patty readiness</b> — color-ramp sampler that emits raw / browned / charred.</div></li>
+          <li><span class="mark">▢</span><div><b>Recipe runner</b> — eleven-state FSM, gated on readiness.</div></li>
+          <li><span class="mark">▢</span><div><b>Scene loader</b> — boots the USD scene, validates joint angles.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  03 CYCLE  ───────────────────────── -->
+<section class="s" id="cycle">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num reveal">[ 03 ]<br/>CYCLE</div>
+      <div>
+        <h2 class="section-title" data-split>The recipe order,<br/><em>kept static.</em></h2>
+        <p class="section-deck reveal delay-2">
+          The turntable above is a visual scroll moment, not a state visualizer.
+          The actual controller advances through this fixed recipe order, with
+          the smash step happening immediately after the patty lands on the
+          stove.
+        </p>
+      </div>
+    </div>
+
+    <div class="fsm-frame reveal delay-2">
+      <div class="fsm-head">
+        <span>// FSM · recipe_runner</span>
+        <span>STATIC ORDER · NOT SCROLL-SYNCED</span>
+      </div>
+      <div class="states">
+        <div class="state">INIT</div>             <div class="arrow">→</div>
+        <div class="state">HOME</div>             <div class="arrow">→</div>
+        <div class="state">PICK_PATTY</div>       <div class="arrow">→</div>
+        <div class="state">PLACE_STOVE</div>      <div class="arrow">→</div>
+        <div class="state">SMASH</div>            <div class="arrow">→</div>
+        <div class="state">COOK_A</div>
+      </div>
+      <div class="states" style="margin-top:8px">
+        <div class="state">FLIP</div>             <div class="arrow">→</div>
+        <div class="state">COOK_B</div>           <div class="arrow">→</div>
+        <div class="state">PICK_STOVE</div>       <div class="arrow">→</div>
+        <div class="state">PLACE_ASSY</div>       <div class="arrow">→</div>
+        <div class="state">HANDOFF</div>
+      </div>
+      <div class="legend">
+        <span><span class="sw"></span>Recipe order</span>
+        <span><span class="sw curr"></span>Scroll scene is illustrative</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  04 DEMO  ───────────────────────── -->
+<!-- Demo lives in the dark act — closes the "inside the simulation" arc. -->
+<section class="s" id="demo">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num reveal">[ 04 ]<br/>DEMO</div>
+      <div>
+        <h2 class="section-title" data-split>The build,<br/><em>captured.</em></h2>
+        <p class="section-deck reveal delay-2">
+          Screenshots and clips drop in here as the team records them. Each
+          tile is labeled with the system event it shows.
+        </p>
+      </div>
+    </div>
+
+    <div class="demo-grid reveal delay-2">
+      <div class="tile">
+        <span class="id">// 01</span>
+        <span class="center">SCENE · WORKCELL</span>
+        <div class="meta"><span>scene_loader.usd</span><span class="pending">PENDING</span></div>
+      </div>
+      <div class="tile">
+        <span class="id">// 02</span>
+        <span class="center">ARM · HOME POSE</span>
+        <div class="meta"><span>arm.home()</span><span class="pending">PENDING</span></div>
+      </div>
+      <div class="tile">
+        <span class="id">// 03</span>
+        <span class="center">PERCEPTION · COLOR RAMP</span>
+        <div class="meta"><span>patty_state.tick</span><span class="pending">PENDING</span></div>
+      </div>
+      <div class="tile">
+        <span class="id">// 04</span>
+        <span class="center">END-EFFECTOR · SWAP</span>
+        <div class="meta"><span>tool.swap()</span><span class="pending">PENDING</span></div>
+      </div>
+      <div class="tile">
+        <span class="id">// 05</span>
+        <span class="center">FLIP · IN PROGRESS</span>
+        <div class="meta"><span>fsm.flip</span><span class="pending">PENDING</span></div>
+      </div>
+      <div class="tile">
+        <span class="id">// 06</span>
+        <span class="center">FULL CYCLE</span>
+        <div class="meta"><span>fsm.run()</span><span class="pending">PENDING</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  05 TEAM  ───────────────────────── -->
+<!-- Team brings us back to warm — the human credits wrap-up. -->
+<section class="s" id="team">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num reveal">[ 05 ]<br/>TEAM</div>
+      <div>
+        <h2 class="section-title" data-split>Three developers,<br/><em>one workcell.</em></h2>
+        <p class="section-deck reveal delay-2">
+          A senior project group at Kennesaw State University. Roles
+          overlapped, but each member owned a slice of the system end-to-end.
+        </p>
+      </div>
+    </div>
+
+    <div class="team-grid reveal delay-2">
+      <div class="member">
+        <span class="role">// Lead · Dev · Web</span>
+        <h3>Will Martin</h3>
+        <p>Architecture, scene assembly, project website.</p>
+        <div class="duties">
+          USD scene<span>scene_loader.py</span>
+          arm controller<span>arm_controller.py</span>
+        </div>
+      </div>
+
+      <div class="member">
+        <span class="role">// Dev · Docs</span>
+        <h3>Michael Collins</h3>
+        <p>Perception, FSM, final report.</p>
+        <div class="duties">
+          patty readiness<span>patty_state.py</span>
+          recipe runner<span>recipe_runner.py</span>
+        </div>
+      </div>
+
+      <div class="member">
+        <span class="role">// Dev · Docs</span>
+        <h3>Logan Nelson</h3>
+        <p>End-effector manager, integration tests.</p>
+        <div class="duties">
+          tool swaps<span>end_effector_manager.py</span>
+          test cases<span>tests/TC-01..09</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────  FOOTER  ───────────────────────── -->
+<footer>
+  <div class="wrap foot">
+    <div class="left">
+      <p class="h">Cooking, <em>still.</em></p>
+      <p>Senior project, Spring 2026. Built in NVIDIA Isaac Sim. Source on GitHub. Final report inside the repo.</p>
+    </div>
+    <div class="right">
+      <a href="https://github.com/Pahtolo/turbo-burger-site" target="_blank" rel="noopener">GitHub ↗</a>
+      <a href="https://github.com/Pahtolo/turbo-burger-site#readme" target="_blank" rel="noopener">README ↗</a>
+      <a href="#">Final Report (PDF) ↗</a>
+    </div>
+  </div>
+  <div class="wrap colophon">
+    <span>// CS 4850 · SECTION 02 · KSU · SPRING 2026</span>
+    <span>// V0.9.2 · BUILD 2026.05</span>
+  </div>
+  <div class="wrap">
+    <p class="ur-credit">
+      The 3D arm representation is a UR5e-labeled derivative of Universal Robots graphical documentation.
+      © 2023 Universal Robots A/S. Use hereof is subject to Universal Robots A/S' Terms and Conditions for Use of Graphical Documentation.
+    </p>
+  </div>
+</footer>
+
+<script type="module" src="./main.js"></script>
+
+</body>
+</html>
