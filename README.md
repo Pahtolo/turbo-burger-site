@@ -4,7 +4,7 @@
 
 A Universal Robots arm with three interchangeable end-effectors — a parallel gripper, a spatula-style flipper, and a smasher plate — cooks, flips, smashes, and assembles smash burgers on a fully simulated kitchen line. Built as a CS 4850 senior project at Kennesaw State University, Spring 2026.
 
-**[→ Project website](https://pahtolo.github.io/turbo-burger-site/)** · **[→ Final report (PDF)](docs/FinalReport.pdf)** · [Status: 🟡 Core infra ready · flip in progress]
+**[→ Project website](https://pahtolo.github.io/turbo-burger-site/)** · **[→ Presentation video](https://youtu.be/Ta_aUvDQPjg)** · **[→ Final report (PDF)](docs/FinalReport.pdf)** · [Status: 🟡 Core infra ready · flip in progress]
 
 ---
 

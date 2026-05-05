@@ -63,7 +63,7 @@ Not needed for the senior project — the default `*.github.io` URL is fine.
 
 ## Adding media later
 
-The demo section in `index.html` currently has placeholder tiles. To replace a tile with a real screenshot or GIF:
+The demo section in `index.html` uses screenshot tiles. To add or replace a screenshot or GIF:
 
 1. Drop the file into an `/assets/` folder at the repo root.
 2. In `index.html`, find the relevant `<div class="tile">` block and replace the placeholder SVG + text with:

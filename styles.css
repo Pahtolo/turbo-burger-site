@@ -134,10 +134,27 @@ nav.links a.active {
   padding: 8px 14px; border: 1px solid rgba(244, 239, 228, 0.22); border-radius: 999px;
   transition: border-color .2s, color .2s, background .2s;
 }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-cta.primary {
+  background: #f4efe4;
+  border-color: #f4efe4;
+  color: #090807;
+}
 .nav-cta:hover { border-color: var(--ember); color: var(--ember); }
+.nav-cta.primary:hover {
+  background: #ffb38a;
+  border-color: #ffb38a;
+  color: #090807;
+}
 
 @media (max-width: 760px) {
   nav.links { display: none; }
+  .nav-actions .nav-cta:not(.primary) { display: none; }
+  .brand-mark { display: none; }
 }
 
 /* ──────────  Hero  ────────── */
@@ -893,6 +910,70 @@ body.dark-active {
 }
 @media (max-width: 880px) { .demo-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 540px) { .demo-grid { grid-template-columns: 1fr; } }
+
+.demo-callout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  margin: -8px 0 22px;
+  padding: 24px;
+  border: 1px solid var(--c-line-2);
+  border-radius: 8px;
+  background: var(--c-paper);
+  transition: background 600ms ease, border-color 600ms ease;
+}
+@media (max-width: 760px) {
+  .demo-callout { grid-template-columns: 1fr; }
+}
+.demo-callout .eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ember);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+.demo-callout h3 {
+  margin: 0 0 6px;
+  font-family: var(--serif);
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1;
+  font-weight: 400;
+  color: var(--c-ink);
+  letter-spacing: 0;
+}
+.demo-callout p {
+  margin: 0;
+  color: var(--c-ink-soft);
+  max-width: 58ch;
+}
+.obvious-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 14px 18px;
+  border: 1px solid var(--ember);
+  border-radius: 6px;
+  background: var(--ember);
+  color: #090807;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  box-shadow: 0 10px 30px rgba(216, 66, 27, 0.18);
+  transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, background .2s;
+}
+.obvious-link:hover {
+  transform: translateY(-2px);
+  background: #ffb38a;
+  box-shadow: 0 14px 34px rgba(216, 66, 27, 0.26);
+}
+.obvious-link span { font-size: 14px; }
+
 .tile {
   aspect-ratio: 4 / 3;
   border: 1px solid var(--c-line);
@@ -930,6 +1011,30 @@ body.dark-active {
   color: var(--c-ink-soft);
   letter-spacing: 0;
 }
+.media-tile {
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  background: #090807;
+}
+.media-tile img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transform: scale(1.01);
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.media-tile:hover img { transform: scale(1.045); }
+.media-tile::before {
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(9, 8, 7, 0.02), rgba(9, 8, 7, 0.78));
+  opacity: 1;
+}
+.media-tile .meta {
+  z-index: 2;
+  color: rgba(241, 233, 216, 0.72);
+}
+.tile .meta .ready { color: #ffb38a; }
 
 /* ──────────  Footer  ────────── */
 
@@ -959,13 +1064,39 @@ footer {
   font-size: 14px;
 }
 .foot .right {
-  display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
   font-family: var(--mono); font-size: 11px;
   color: rgba(241, 233, 216, 0.55);
   letter-spacing: 0; text-transform: uppercase;
 }
-.foot .right a { color: rgba(241, 233, 216, 0.85); transition: color .2s; }
-.foot .right a:hover { color: #ffb38a; }
+.foot .right a {
+  color: rgba(241, 233, 216, 0.92);
+  transition: color .2s, border-color .2s, background .2s, transform .2s;
+}
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  min-width: 190px;
+  padding: 10px 14px;
+  border: 1px solid rgba(241, 233, 216, 0.22);
+  border-radius: 6px;
+}
+.footer-link.primary {
+  background: #f1e9d8;
+  color: #090807;
+  border-color: #f1e9d8;
+}
+.foot .right a:hover {
+  color: #ffb38a;
+  border-color: #ffb38a;
+  transform: translateY(-1px);
+}
+.footer-link.primary:hover {
+  background: #ffb38a;
+  color: #090807;
+}
 .colophon {
   margin-top: 56px;
   padding-top: 22px;
